@@ -1,0 +1,35 @@
+
+╭─── Claude Code v2.1.168 ─────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting started                                        │
+│                 Welcome back nnjs!                 │ Run /init to create a CLAUDE.md file with instructions for Cla… │
+│                                                    │ ─────────────────────────────────────────────────────────────── │
+│                       ▐▛███▜▌                      │ What's new                                                      │
+│                      ▝▜█████▛▘                     │ Bug fixes and reliability improvements                          │
+│                        ▘▘ ▝▝                       │ Bug fixes and reliability improvements                          │
+│   Opus 4.8 (1M context) with xh… · Claude Max ·    │ Added `fallbackModel` setting to configure up to three fallbac… │
+│   nnjs@y.ke's Organization                         │ /release-notes for more                                         │
+│                      ~/ccfly                       │                                                                 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+❯ /context
+  ⎿  Context Usage
+     ⛀ ⛁ ⛁ ⛁ ⛀ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶   Opus 4.8 (1M context)
+     ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶   claude-opus-4-8[1m]
+     ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶   18.8k/1m tokens (2%)
+▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+   Settings  Status   Config   Usage   Stats
+
+   Version:          2.1.168
+   Session name:     /rename to add a name
+   Session ID:       c1bf44f3-ed7f-4fd7-8b94-0aff4fb9932a
+   cwd:              /Users/jinxing/ccfly
+   Login method:     Claude Max account
+   Organization:     nnjs@y.ke's Organization
+   Email:            nnjs@y.ke
+
+   Model:            Default (Opus 4.8 with 1M context · Most capable for complex work)
+   MCP servers:      1 connected, 3 need auth, 1 disabled · /mcp
+   Setting sources:  User settings, Project local settings
+
+   Esc to cancel

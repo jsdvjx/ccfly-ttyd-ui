@@ -1,0 +1,120 @@
+/* theme/vscode.css — VSCode "Dark Modern" 设计 token,作用域在 .ccfly-chat 下(不污染终端态/hub 壳)。
+   复用 Jarvis blocks.css 的变量名(--bg/--bg2/--card/--bd/--fg/--mut/--acc/--green/--amber/--red),
+   但取值重绑成 VSCode Dark Modern;另加 --vsc-* 给 composer/chrome。blocks.css 选择器整体 scope 在 .ccfly-chat。 */
+.ccfly-chat {
+  /* Jarvis blocks 复用名(重绑 VSCode) */
+  --bg: #1f1f1f; /* editor */
+  --bg2: #181818; /* sidebar/活动栏 */
+  --card: #202020; /* 卡片底 */
+  --bd: #2b2b2b; /* 边框/分隔 */
+  --fg: #cccccc; /* 主前景 */
+  --mut: #9d9d9d; /* 次要文字 */
+  --acc: #0078d4; /* 强调(focusBorder/按钮) */
+  --green: #2ea043;
+  --amber: #cca700;
+  --red: #f85149;
+
+  /* composer / chrome */
+  --vsc-input-bg: #313131;
+  --vsc-input-border: #3c3c3c;
+  --vsc-btn-bg: #0078d4;
+  --vsc-btn-hover: #026ec1;
+  --vsc-btn-fg: #ffffff;
+  --vsc-btn2-bg: #313131;
+  --vsc-list-hover: #2a2d2e;
+  --vsc-list-sel: #04395e;
+  --vsc-link: #4daafc;
+  --vsc-add-wash: #2ea04326;
+  --vsc-del-wash: #f8514926;
+  --vsc-badge: #616161;
+  --vsc-scrollbar: rgba(121, 121, 121, 0.4);
+
+  /* 字体 */
+  --vsc-sans: -apple-system, 'Segoe UI', system-ui, Roboto, sans-serif;
+  --vsc-mono: 'JetBrainsMono Nerd Font Mono', Menlo, Monaco, monospace;
+
+  background: var(--bg);
+  color: var(--fg);
+  font: 13px/1.5 var(--vsc-sans);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.ccfly-chat * {
+  box-sizing: border-box;
+}
+
+/* 滚动条(VSCode 细滚动条观感) */
+.ccfly-chat ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.ccfly-chat ::-webkit-scrollbar-thumb {
+  background: var(--vsc-scrollbar);
+  border-radius: 5px;
+}
+.ccfly-chat ::-webkit-scrollbar-thumb:hover {
+  background: rgba(121, 121, 121, 0.7);
+}
+
+/* highlight.js token → VSCode Dark Modern 配色(贴近编辑器里看代码的观感)。 */
+.ccfly-chat .hljs-comment,
+.ccfly-chat .hljs-quote {
+  color: #6a9955;
+  font-style: italic;
+}
+.ccfly-chat .hljs-keyword,
+.ccfly-chat .hljs-literal,
+.ccfly-chat .hljs-selector-tag,
+.ccfly-chat .hljs-doctag,
+.ccfly-chat .hljs-name {
+  color: #569cd6;
+}
+.ccfly-chat .hljs-built_in,
+.ccfly-chat .hljs-type,
+.ccfly-chat .hljs-class .hljs-title,
+.ccfly-chat .hljs-title.class_ {
+  color: #4ec9b0;
+}
+.ccfly-chat .hljs-string,
+.ccfly-chat .hljs-regexp,
+.ccfly-chat .hljs-meta .hljs-string {
+  color: #ce9178;
+}
+.ccfly-chat .hljs-number,
+.ccfly-chat .hljs-symbol,
+.ccfly-chat .hljs-bullet {
+  color: #b5cea8;
+}
+.ccfly-chat .hljs-title,
+.ccfly-chat .hljs-title.function_,
+.ccfly-chat .hljs-section {
+  color: #dcdcaa;
+}
+.ccfly-chat .hljs-variable,
+.ccfly-chat .hljs-attr,
+.ccfly-chat .hljs-attribute,
+.ccfly-chat .hljs-template-variable,
+.ccfly-chat .hljs-property {
+  color: #9cdcfe;
+}
+.ccfly-chat .hljs-params {
+  color: var(--fg);
+}
+.ccfly-chat .hljs-meta,
+.ccfly-chat .hljs-keyword.hljs-meta {
+  color: #c586c0;
+}
+.ccfly-chat .hljs-deletion {
+  color: #f48771;
+}
+.ccfly-chat .hljs-addition {
+  color: #89d185;
+}
+.ccfly-chat .hljs-emphasis {
+  font-style: italic;
+}
+.ccfly-chat .hljs-strong {
+  font-weight: 600;
+}

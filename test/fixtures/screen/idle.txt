@@ -1,0 +1,35 @@
+
+╭─── Claude Code v2.1.168 ─────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting started                                        │
+│                 Welcome back nnjs!                 │ Run /init to create a CLAUDE.md file with instructions for Cla… │
+│                                                    │ ─────────────────────────────────────────────────────────────── │
+│                       ▐▛███▜▌                      │ What's new                                                      │
+│                      ▝▜█████▛▘                     │ Bug fixes and reliability improvements                          │
+│                        ▘▘ ▝▝                       │ Bug fixes and reliability improvements                          │
+│   Opus 4.8 (1M context) with xh… · Claude Max ·    │ Added `fallbackModel` setting to configure up to three fallbac… │
+│   nnjs@y.ke's Organization                         │ /release-notes for more                                         │
+│                      ~/ccfly                       │                                                                 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                                      ◉ xhigh · /effort
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯ 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ⏵⏵ auto mode on (shift+tab to cycle) · ← for agents

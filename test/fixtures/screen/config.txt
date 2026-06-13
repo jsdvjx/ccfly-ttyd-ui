@@ -1,0 +1,35 @@
+
+╭─── Claude Code v2.1.168 ─────────────────────────────────────────────────────────────────────────────────────────────╮
+▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+   Settings  Status   Config   Usage   Stats
+
+   ╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+   │ ⌕ Search settings…                                                                                             │
+   ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+     Auto-compact                               true
+     Show tips                                  true
+     Reduce motion                              false
+     Thinking mode                              true
+     Prompt suggestions                         true
+     Session recap                              true
+     Rewind code (checkpoints)                  true
+     Dynamic workflows                          true
+     Ultracode keyword trigger                  true
+     Verbose output                             false
+     Terminal progress bar                      true
+     Show turn duration                         true
+     Default permission mode                    Auto mode
+     Worktree base ref                          fresh
+     Use auto mode during plan                  true
+     Respect .gitignore in file picker          true
+     Skip the /copy picker                      false
+     Copy on select                             true
+     Auto-scroll                                true
+     Open agents view by default                false
+     ← opens agents                             true
+     Auto-update channel                        latest
+     Theme                                      Dark mode
+   ↓ 12 more below
+
+   Type to filter · Enter/↓ to select · ↑ to tabs · Esc to clear

@@ -1,0 +1,23 @@
+{
+  "name": "ccfly",
+  "short_name": "ccfly",
+  "description": "cc.hn · Claude Code Hub & Node —— 一个 Hub 网关,统辖你机群里的每个 Node",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0c0e13",
+  "theme_color": "#0c0e13",
+  "icons": [
+    { "src": "/icon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" },
+    {
+      "src": "/icon-maskable-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}

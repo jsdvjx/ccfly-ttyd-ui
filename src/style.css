@@ -1,0 +1,85 @@
+/* 终端字体:JetBrainsMono Nerd Font Mono(内置 woff2)。Mono 变体把图标限制在单格宽,终端对齐不乱;
+   含完整 Nerd/Powerline 字形 → starship/p10k 等提示符图标不再是豆腐块。两处 embed 共用 /fonts。 */
+@font-face {
+  font-family: 'JetBrainsMono Nerd Font Mono';
+  src: url('/fonts/JetBrainsMonoNerdFontMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrainsMono Nerd Font Mono';
+  src: url('/fonts/JetBrainsMonoNerdFontMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 符号回退字体(子集自 Noto,已归一到单格宽):补 JetBrainsMono 缺的 Misc-Symbols ——
+   claude /context 网格用的 ⛀⛁(U+26C0/1)、⛶(U+26F6 方框)等,否则浏览器回退成 -/_(满屏横线)。
+   unicode-range 限定只对这些码点生效 + 仅在用到时才下载;JetBrains 仍是主字体,逐字形回退。 */
+@font-face {
+  font-family: 'Ccfly Symbols';
+  src: url('/fonts/CcflySymbols.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+2190-21FF, U+2300-23FF, U+2600-27BF, U+2B00-2BFF;
+}
+
+/* 终端必须禁用连字:JetBrainsMono 自带 ligatures(!=→≠、->→→、____ 连成横线),
+   而 xterm DOM 渲染器把同样式的连续格子并成一个 span,连字一触发就把 ─/_/-/= 连成「满屏横线」、
+   并破坏逐格列对齐。font-variant-ligatures:none + 关掉各 feature 双保险(box-drawing ─ 是单字形,
+   本就该连成干净边框,不受影响)。 */
+.xterm,
+.xterm .xterm-rows {
+  font-variant-ligatures: none;
+  font-feature-settings:
+    'liga' 0,
+    'calt' 0,
+    'dlig' 0,
+    'hlig' 0;
+}
+
+:root {
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* 移动端防「整页被拽出空地/露白条」:iOS 上文档级橡皮筋光靠 overscroll-behavior 拦不住,
+   且任何超出 body 高度的内容(如钉成动态视口高的 .app 比 svh 的 body 高)都会让文档真的可滚。
+   做法:文档层(html/body)钉死永不可滚,#app 成为唯一的「视口盒」——长页(hub 列表/doc)在它
+   里面滚,chat 模式内容恰好撑满不滚。 */
+html {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0b0e14;
+  overscroll-behavior: none;
+}
+body {
+  position: fixed; /* iOS 文档橡皮筋的可靠杀招(仅 overflow:hidden 仍可被拽动) */
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+  background: #0b0e14;
+  color: #e5e7eb;
+  overscroll-behavior: none;
+}
+#app {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  background: #0b0e14;
+}
+
+button {
+  font-family: inherit;
+}

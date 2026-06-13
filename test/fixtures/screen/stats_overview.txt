@@ -1,0 +1,35 @@
+
+╭─── Claude Code v2.1.168 ─────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting started                                        │
+│                 Welcome back nnjs!                 │ Run /init to create a CLAUDE.md file with instructions for Cla… │
+▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+   Settings  Status   Config   Usage   Stats
+
+    Overview   Models
+
+
+       Jun Jul Aug Sep Oct Nov Dec Jan Feb Mar Apr May Jun
+       ···············································▒▒··█
+   Mon ················································▓▓·█
+       ···············································▒░·▒
+   Wed ···············································░▓░█
+       ···············································▒·░▓
+   Fri ················································▓▓█
+       ················································░▒█
+
+       Less ░ ▒ ▓ █ More
+
+   All time · Last 7 days · Last 30 days
+
+   Favorite model: Opus 4.8        Total tokens: 37.4m
+
+   Sessions: 58                    Longest session: 14d 0h 15m
+   Active days: 23/31              Longest streak: 8 days
+   Most active day: Jun 4          Current streak: 8 days
+
+   Your longest session is ~168x longer than a half marathon (average time)
+
+     ↓ stats · r to cycle dates · ctrl+s to copy
+
+
+

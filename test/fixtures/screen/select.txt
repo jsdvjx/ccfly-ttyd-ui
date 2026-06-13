@@ -1,0 +1,41 @@
+  │ 价格         │ 偏贵，常 $50–100+/年    │ 中等，约 $30–90/年              │
+  ├──────────────┼─────────────────────────┼─────────────────────────────────┤
+  │ 续费稳定性   │ 一般，偶有涨价/政策变动 │ 较稳定，老牌                    │
+  ├──────────────┼─────────────────────────┼─────────────────────────────────┤
+  │ 居民要求     │ 无                      │ 无                              │
+  └──────────────┴─────────────────────────┴─────────────────────────────────┘
+
+  谐音/记忆角度
+
+  - .am 天生有语义优势：a.m.（早上）、AM 广播、I am，老外一眼能联想，读起来顺（"C-C-dot-A-M"）。短链/品牌站用得很多。
+  - .hn 没有现成的英文语义，但对中文用户有个隐藏点：hn 可读作"湖南"，如果是地域相关项目反而是加分项；否则就是纯字母组合。
+
+  给你的结论
+
+  - 做 短链 / 国际化品牌站（类似你的 Y.KE）→ cc.am：注册商多、续费省心、语义好，长期持有风险低。
+  - 做 湖南本地相关 / 想要谐音梗 → cc.hn 才有意义。
+  - 如果只是图"cc"这两个字母好看，两者体验上 .am 完胜，.hn 主要的坑是注册商少、续费贵、政策不如 .am
+  稳——短域名最怕的就是哪天注册局涨价或不让续，.hn 这方面风险更高。
+
+  要不要我查一下这两个域名当前是否还没被注册、以及具体注册商的实时价格？这块时效性强，我可以联网确认。
+
+✻ Worked for 31s
+
+❯ /plugin
+  ⎿  ✓ Installed astronomer-data. Run /reload-plugins to apply.
+
+※ recap: You're choosing between the domains cc.hn and cc.am; I recommended cc.am as the safer, better-supported choice. Next, I can check
+  live registration availability and registrar pricing for both if you'd like. (disable recaps in /config)
+
+▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+   Select model
+   Switch between Claude models. Your pick becomes the default for new sessions. For other/previous model names, specify with --model.
+
+     1. Default (recommended)  Opus 4.8 with 1M context · Most capable for complex work
+     2. Sonnet                 Sonnet 4.6 · Best for everyday tasks
+     3. Haiku                  Haiku 4.5 · Fastest for quick answers
+   ❯ 4. Opus 4.8 ✔             Most capable for complex work (claude-opus-4-8)
+
+   ◉ xHigh effort ←/→ to adjust
+
+   Enter to set as default · s to use this session only · Esc to cancel

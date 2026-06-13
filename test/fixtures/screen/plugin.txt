@@ -1,0 +1,35 @@
+
+╭─── Claude Code v2.1.168 ─────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting started                                        │
+│                 Welcome back nnjs!                 │ Run /init to create a CLAUDE.md file with instructions for Cla… │
+│                                                    │ ─────────────────────────────────────────────────────────────── │
+│                       ▐▛███▜▌                      │ What's new                                                      │
+│                      ▝▜█████▛▘                     │ Bug fixes and reliability improvements                          │
+│                        ▘▘ ▝▝                       │ Bug fixes and reliability improvements                          │
+│   Opus 4.8 (1M context) with xh… · Claude Max ·    │ Added `fallbackModel` setting to configure up to three fallbac… │
+│   nnjs@y.ke's Organization                         │ /release-notes for more                                         │
+▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+   Plugins  Discover   Installed   Marketplaces   Errors
+
+   Discover plugins (1/221)
+   ╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   │ ⌕ Search…
+   ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+   ❯ ◯ frontend-design · claude-plugins-official · 867K installs
+       Create distinctive, production-grade frontend interfaces wi…
+
+     ◯ superpowers · claude-plugins-official · 787.1K installs
+       Superpowers teaches Claude brainstorming, subagent driven d…
+
+     ◯ code-review · claude-plugins-official · 359.6K installs
+       Automated code review for pull requests using multiple spec…
+
+     ◯ context7 · claude-plugins-official [Community Managed] · 358.9K installs
+       Upstash Context7 MCP server for up-to-date documentation lo…
+
+     ◯ skill-creator · claude-plugins-official · 297.3K installs
+       Create new skills, improve existing skills, and measure ski…
+    ↓ more below
+
+   Type to search · Space to toggle · Enter to view · Esc to go back

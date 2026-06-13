@@ -1,0 +1,35 @@
+
+╭─── Claude Code v2.1.168 ─────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting started                                        │
+│                 Welcome back nnjs!                 │ Run /init to create a CLAUDE.md file with instructions for Cla… │
+│                                                    │ ─────────────────────────────────────────────────────────────── │
+│                       ▐▛███▜▌                      │ What's new                                                      │
+│                      ▝▜█████▛▘                     │ Bug fixes and reliability improvements                          │
+│                        ▘▘ ▝▝                       │ Bug fixes and reliability improvements                          │
+│   Opus 4.8 (1M context) with xh… · Claude Max ·    │ Added `fallbackModel` setting to configure up to three fallbac… │
+│   nnjs@y.ke's Organization                         │ /release-notes for more                                         │
+│                      ~/ccfly                       │                                                                 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+
+
+
+
+
+
+▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+   Manage MCP servers
+   5 servers
+
+     User MCPs (/Users/jinxing/.claude.json)
+   ❯ fusion360 · ✔ connected · 2 tools
+
+     claude.ai
+     → Show unused connectors (3)
+
+     Built-in MCPs (always available)
+     computer-use · ◯ disabled
+
+   https://code.claude.com/docs/en/mcp for help
+   ↑/↓ to navigate · Enter to confirm · Esc to cancel

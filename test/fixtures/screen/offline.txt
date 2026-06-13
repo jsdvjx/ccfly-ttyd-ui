@@ -1,0 +1,40 @@
+❯ 把基本的几个npm publish脚本完善一下
+zsh: command not found: 把基本的几个npm publish脚本完善一下
+❯ publish脚本完善一下
+zsh: command not found: publish脚本完善一下
+❯ /context
+zsh: no such file or directory: /context
+❯ /context
+zsh: no such file or directory: /context
+❯ /context
+zsh: no such file or directory: /context
+❯ /context
+zsh: no such file or directory: /context
+❯ /context
+zsh: no such file or directory: /context
+❯ /context
+zsh: no such file or directory: /context
+❯ /context
+zsh: no such file or directory: /context
+❯ context
+zsh: command not found: context
+❯ /context
+zsh: no such file or directory: /context
+    ~/Jarvis  on   main !8 ?13                                                                            127 ✘  at 16:47:27  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
