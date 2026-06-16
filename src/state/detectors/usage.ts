@@ -13,6 +13,8 @@
 // 线上经 ttyd/xterm 读屏时末尾会多出 tmux 状态栏那一行,所以扫「末尾窗口」而非整屏更省;
 // 但这些锚点散布在面板各处(底部那条会随滚动浮动),取一个足够大的尾窗口最稳。
 
+import { tail, anyLine } from '../region.ts'
+
 const reUsageShare = /%\s*of your usage/i
 const reLast24h = /Last\s*24h/i
 const reSubagentHeavy = /subagent-heavy sessions/i
@@ -22,19 +24,12 @@ const reContributing = /contributing to your limits/i
 const reCurrentScope = /Current\s+(session|week)\b/i
 const reUsedPct = /\d+%\s*used\b/i
 
+const ANCHORS = [reUsageShare, reLast24h, reSubagentHeavy, reContributing, reCurrentScope, reUsedPct]
+
 // detectUsage — 命中任一用量正文锚点即判定为用量面板。
 // 这些锚点彼此独立、互不出现在其它面板,任一命中都足以确认;
 // 多锚点 OR 也能扛住面板滚动导致某些行被裁掉的情况。
+// 取末尾足够大的窗口(30 行):面板正文行数多,且线上尾部可能粘着 tmux 状态栏。
 export function detectUsage(lines: string[]): boolean {
-  // 取末尾足够大的窗口:面板正文行数多,且线上尾部可能粘着 tmux 状态栏。
-  const win = lines.slice(-30)
-  return win.some(
-    (l) =>
-      reUsageShare.test(l) ||
-      reLast24h.test(l) ||
-      reSubagentHeavy.test(l) ||
-      reContributing.test(l) ||
-      reCurrentScope.test(l) ||
-      reUsedPct.test(l),
-  )
+  return anyLine(tail(lines, 30), ANCHORS)
 }

@@ -14,6 +14,8 @@
 
 // ── claude 框架锚点(命中任意一个 → 这是 claude 屏,不是 offline)───────────────
 // 外边框 / 长横线 / 浮层顶部的 ▔ 横条。
+import { anyLine, tailNonBlank } from '../region.ts'
+
 const reBorder = /[╭╮╰╯]|─{6,}|▔{6,}/
 // 忙碌底栏后缀。
 const reBusy = /esc\s+to\s+interrupt/i
@@ -36,22 +38,13 @@ const reShellErr = /^(zsh|bash|fish|sh|dash|ksh):\s/
 const reStarshipTime = /\bat\s+\d{1,2}:\d{2}(:\d{2})?\s*$/
 
 function hasClaudeChrome(lines: string[]): boolean {
-  return lines.some(
-    (l) =>
-      reBorder.test(l) ||
-      reBusy.test(l) ||
-      reIdleHint.test(l) ||
-      reFooter.test(l) ||
-      reTabbar.test(l) ||
-      reResets.test(l) ||
-      rePanelText.test(l),
-  )
+  return anyLine(lines, [reBorder, reBusy, reIdleHint, reFooter, reTabbar, reResets, rePanelText])
 }
 
 export function detectOffline(lines: string[]): boolean {
   // 屏上有任何 claude 痕迹 → 不是 offline。
   if (hasClaudeChrome(lines)) return false
   // 末尾窗口里找 shell 证据(扫多行,绕开末行可能是 tmux 状态栏的情况)。
-  const tail = lines.filter((l) => l.trim()).slice(-8)
-  return tail.some((l) => reShellErr.test(l.trim()) || reStarshipTime.test(l))
+  const win = tailNonBlank(lines, 8)
+  return win.some((l) => reShellErr.test(l.trim()) || reStarshipTime.test(l))
 }

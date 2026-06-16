@@ -14,6 +14,8 @@
 //   输入框(上下 ─ 边框)+ footer + tmux 状态栏的余量。
 
 // busy/subagent 的生成期 footer —— 出现即非 idle。大小写不敏感。
+import { tail } from '../region.ts'
+
 const RE_INTERRUPT = /esc\s+to\s+interrupt/i
 
 // 空闲 footer 的内容锚点(任一命中即可):
@@ -36,7 +38,7 @@ const RE_BORDER = /^\s*─{20,}\s*$/
 const TAIL = 12
 
 export function detectIdle(lines: string[]): boolean {
-  const win = lines.slice(-TAIL)
+  const win = tail(lines, TAIL)
 
   // busy/subagent:footer 带 esc to interrupt —— 直接否。
   if (win.some((l) => RE_INTERRUPT.test(l))) return false

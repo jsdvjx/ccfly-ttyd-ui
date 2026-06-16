@@ -13,6 +13,8 @@
 // - 要≥2 个锚点同时命中,避免普通对话里偶然提到某条快捷键就误判。
 
 // 强锚点:几乎只在帮助面板里出现。
+import { countHits } from '../region.ts'
+
 const reKeybindings = /\/keybindings\b/i // 「/keybindings to customize」
 const reMoreHelpUrl = /For\s+more\s+help:.*code\.claude\.com/i // 帮助文档链接
 const reShortcutsHeading = /^\s*Shortcuts\s*$/i // 「Shortcuts」小标题
@@ -35,12 +37,6 @@ const anchors = [
 ]
 
 export function detectHelp(lines: string[]): boolean {
-  let hits = 0
-  for (const line of lines) {
-    if (anchors.some((re) => re.test(line))) {
-      hits++
-      if (hits >= 2) return true
-    }
-  }
-  return false
+  // ≥2 个锚点命中(同 ctrl-shortcut 表里多条同时出现)→ help。
+  return countHits(lines, anchors) >= 2
 }

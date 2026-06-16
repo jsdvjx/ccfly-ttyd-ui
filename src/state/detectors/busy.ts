@@ -11,11 +11,13 @@
 //   代理坞(busy footer 之下还有 1~3 行代理坞)+ tmux 状态栏。
 
 // "esc to interrupt" —— 大小写不敏感;中间的分隔符容忍普通空格 / 不间断空格( )。
+import { tail, anyLine } from '../region.ts'
+
 const RE_INTERRUPT = /esc\s+to\s+interrupt/i
 
 // 末尾窗口行数:留出 footer + 代理坞 + tmux 状态栏的余量。
 const TAIL = 10
 
 export function detectBusy(lines: string[]): boolean {
-  return lines.slice(-TAIL).some((l) => RE_INTERRUPT.test(l))
+  return anyLine(tail(lines, TAIL), [RE_INTERRUPT])
 }

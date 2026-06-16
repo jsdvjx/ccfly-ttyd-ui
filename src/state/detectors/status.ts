@@ -17,6 +17,8 @@
 // 给 tmux 状态栏留出余量。任一锚点命中即算 status。
 
 // 字段标签锚点:行内出现「标签 + 冒号」即可(冒号后跟值,或本测试样本里跟多个对齐空格)。
+import { tail, anyLine } from '../region.ts'
+
 const reAnchors = [
   /\bSetting sources\b/i,
   /\bMCP servers:/i, // 带冒号 = status 的字段标签;避免误命中 /mcp 面板标题「Manage MCP servers」
@@ -29,6 +31,5 @@ const reAnchors = [
 const TAIL = 24
 
 export function detectStatus(lines: string[]): boolean {
-  const tail = lines.slice(-TAIL)
-  return tail.some((l) => reAnchors.some((re) => re.test(l)))
+  return anyLine(tail(lines, TAIL), reAnchors)
 }
