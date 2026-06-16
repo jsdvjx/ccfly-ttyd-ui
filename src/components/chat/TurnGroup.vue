@@ -12,6 +12,7 @@ import Notice from './blocks/Notice.vue'
 import AssistantText from './blocks/AssistantText.vue'
 import ThinkingBlock from './blocks/ThinkingBlock.vue'
 import ImageChip from './blocks/ImageChip.vue'
+import BashLocalCard from './blocks/BashLocalCard.vue'
 import Row from './blocks/Row.vue'
 const props = defineProps<{ turn: Turn; sid: string }>()
 const nodes = computed(() => flattenTurn(props.turn))
@@ -78,6 +79,9 @@ watch(
       <ThinkingBlock v-else-if="n.t === 'thinking'" :text="n.text" />
       <Row v-else-if="n.t === 'image'" tone="fg">
         <ImageChip :block="n.block" :sid="sid" :uuid="n.uuid" />
+      </Row>
+      <Row v-else-if="n.t === 'bash'" tone="fg">
+        <BashLocalCard :blocks="n.blocks" />
       </Row>
       <ToolGroup v-else-if="n.t === 'tools'" :tools="n.tools" />
     </MsgBoundary>

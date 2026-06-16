@@ -12,6 +12,18 @@ describe('contentBlocks', () => {
     expect(contentBlocks('   ')).toEqual([])
     expect(contentBlocks(null)).toEqual([])
   })
+  it('`!command` bash echo string → bash blocks (empty stderr skipped)', () => {
+    expect(contentBlocks('<bash-input>pwd</bash-input>')).toEqual([
+      { type: 'bash-input', text: 'pwd' },
+    ])
+    expect(contentBlocks('<bash-stdout>/x</bash-stdout><bash-stderr></bash-stderr>')).toEqual([
+      { type: 'bash-stdout', text: '/x' },
+    ])
+    expect(contentBlocks('<bash-stdout></bash-stdout><bash-stderr>boom</bash-stderr>')).toEqual([
+      { type: 'bash-stdout', text: '' },
+      { type: 'bash-stderr', text: 'boom' },
+    ])
+  })
   it('flattens a mixed block array (text/thinking/tool_use/tool_result)', () => {
     const b = contentBlocks([
       { type: 'text', text: 'hi' },
@@ -181,6 +193,16 @@ describe('flattenTurn', () => {
       },
     ])
     expect(flattenTurn(turn).map((n) => n.t)).toEqual(['tools', 'text', 'tools'])
+  })
+  it('pairs a `!command` input event with its following output into one bash node', () => {
+    const turn = mk([
+      { role: 'user', uuid: 'b1', blocks: [{ type: 'bash-input', text: 'pwd' }] },
+      { role: 'user', uuid: 'b2', blocks: [{ type: 'bash-stdout', text: '/x' }] },
+    ])
+    const nodes = flattenTurn(turn)
+    expect(nodes.map((n) => n.t)).toEqual(['bash'])
+    const bash = nodes[0] as { t: 'bash'; blocks: { type: string }[] }
+    expect(bash.blocks.map((b) => b.type)).toEqual(['bash-input', 'bash-stdout'])
   })
 })
 

@@ -5,7 +5,7 @@
 // 与 Go 的 /transcript 有一处有意分歧:/sse/jsonl 的行**带** image source.data(base64),Go 为 /transcript
 // 剥掉了。这里保留 data,让 ImageChip 能直接用 data: URI,只有路径式(无 data)才需回 /image。
 import type { JEvent } from '../state/types'
-import type { Block, Item, PatchHunk } from './types'
+import type { Block, BlockType, Item, PatchHunk } from './types'
 
 const reImageSource = /^\[Image: source: (.+)\]$/
 
@@ -44,10 +44,30 @@ function resultImage(raw: unknown): { mediaType: string; data: string } | undefi
   return undefined
 }
 
+// bashBlocks:用户 `!命令` 的回显是独立 user 行、content 为字符串,形如
+//   <bash-input>pwd</bash-input>            (输入,一行)
+//   <bash-stdout>…</bash-stdout><bash-stderr>…</bash-stderr>  (输出 + 错误,另一行)
+// 解析成 typed block 让 BashLocalCard 渲染成 IN/OUT/ERR 卡;无 bash 标签 → 返回 null(走普通文本)。
+const RE_BASH = /<(bash-input|bash-stdout|bash-stderr)>([\s\S]*?)<\/\1>/g
+function bashBlocks(s: string): Block[] | null {
+  if (!s.includes('<bash-')) return null
+  const out: Block[] = []
+  RE_BASH.lastIndex = 0
+  for (let m = RE_BASH.exec(s); m; m = RE_BASH.exec(s)) {
+    const type = m[1] as BlockType
+    const text = m[2]
+    if (type === 'bash-stderr' && !text.trim()) continue // 跳过空 stderr(最常见),不画空框
+    out.push({ type, text })
+  }
+  return out.length ? out : null
+}
+
 // contentBlocks:message.content(string 或 block 数组)→ Block[]。1:1 对应 transcript.go。
 export function contentBlocks(content: unknown): Block[] {
   if (content == null) return []
   if (typeof content === 'string') {
+    const bb = bashBlocks(content)
+    if (bb) return bb
     return content.trim() ? [{ type: 'text', text: content }] : []
   }
   if (!Array.isArray(content)) return []

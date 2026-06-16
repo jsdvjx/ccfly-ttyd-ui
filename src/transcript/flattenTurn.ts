@@ -15,6 +15,10 @@ export type TurnNode =
   | { t: 'thinking'; text?: string; key: string }
   | { t: 'image'; block: Block; uuid?: string; key: string }
   | { t: 'tools'; tools: ToolRef[]; key: string }
+  | { t: 'bash'; blocks: Block[]; key: string } // 用户 `!命令` 的 IN/OUT/ERR 卡
+
+const isBashBlock = (b: Block): boolean =>
+  b.type === 'bash-input' || b.type === 'bash-stdout' || b.type === 'bash-stderr'
 
 export function flattenTurn(turn: Turn): TurnNode[] {
   const out: TurnNode[] = []
@@ -28,6 +32,20 @@ export function flattenTurn(turn: Turn): TurnNode[] {
   for (const it of turn.items) {
     const ik = itemKey(it)
     if (it.role === 'user') {
+      const bs0 = it.blocks ?? []
+      if (bs0.length > 0 && bs0.every(isBashBlock)) {
+        // 用户 `!命令` 回显:输入行与输出行是相邻的两条 user 事件;把「纯输出」并进紧邻的输入卡,
+        // 让 IN 与 OUT 落在同一张 BashLocalCard 上。
+        const outputOnly = bs0.every((b) => b.type === 'bash-stdout' || b.type === 'bash-stderr')
+        const last = out[out.length - 1]
+        if (outputOnly && last && last.t === 'bash') {
+          last.blocks.push(...bs0)
+        } else {
+          flush()
+          out.push({ t: 'bash', blocks: [...bs0], key: ik })
+        }
+        continue
+      }
       if (isRealUserPrompt(it)) {
         flush()
         out.push({ t: 'user', item: it, key: ik })

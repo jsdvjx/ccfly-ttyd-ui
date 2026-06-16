@@ -2,7 +2,15 @@
 // 由 useTranscript 从 useJsonl 的原始 events[] 派生;每个 Item 渲染成一条消息,Block 是其内容片段。
 import type { JEvent } from '../state/types'
 
-export type BlockType = 'text' | 'thinking' | 'tool_use' | 'tool_result' | 'image'
+export type BlockType =
+  | 'text'
+  | 'thinking'
+  | 'tool_use'
+  | 'tool_result'
+  | 'image'
+  | 'bash-input' // 用户 `!命令` 的输入(独立 user 行,content 形如 <bash-input>…</bash-input>)
+  | 'bash-stdout' // 其输出(<bash-stdout>…</bash-stdout>)
+  | 'bash-stderr' // 其错误输出(<bash-stderr>…</bash-stderr>)
 
 // structuredPatch 的一个 hunk:lines[] 每行带前缀 ' '|'-'|'+'(与 TUI / git 同源)。
 export interface PatchHunk {

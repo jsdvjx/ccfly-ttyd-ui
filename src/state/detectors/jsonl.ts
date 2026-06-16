@@ -19,7 +19,10 @@ function findLast(events: JEvent[], pred: (e: JEvent) => boolean): JEvent | null
 // detectTurn 必须跳过它们 —— 否则会话尾巴停在 /model 这类命令上时,「user 没等到回复」被
 // 误判成 generating **且永远不退**(实案:屏判失效时输入框卡死「生成中…」,计时器从命令
 // 时刻起一路涨)。
-const RE_LOCAL_CMD = /<command-name>|<local-command-stdout>|<local-command-caveat>/
+// 同理 `!命令`(bash 模式)的回显 <bash-input>/<bash-stdout>/<bash-stderr> 也是无 assistant 回复的
+// user 行 —— 一并跳过,否则尾部停在 bash 命令上同样会卡「生成中…」。
+const RE_LOCAL_CMD =
+  /<command-name>|<local-command-stdout>|<local-command-caveat>|<bash-input>|<bash-stdout>|<bash-stderr>/
 function isLocalCmdEcho(e: JEvent): boolean {
   if (e.type !== 'user') return false
   const c = e.message?.content
