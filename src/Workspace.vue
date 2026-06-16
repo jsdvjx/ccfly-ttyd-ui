@@ -100,7 +100,7 @@ onUnmounted(() => {
       >
       <span class="path" :title="resolvedPath">{{ resolvedPath }}</span>
       <!-- 新建会话:打开目录浏览器 → 在选定目录起全新 claude → 切到它 -->
-      <button class="newbtn" title="新建会话(选目录)" @click="showNew = true">＋ 新建</button>
+      <button class="newbtn" title="新建会话(选目录)" @click="showNew = true">＋<span class="nb-t"> 新建</span></button>
       <!-- 本目录会话面板:列出当前 cwd 下全部会话,点选快速跳转(selSid 变化会自动重连+同步 URL) -->
       <SessionsPanel
         :sessions="sessions"
@@ -157,6 +157,9 @@ onUnmounted(() => {
   background: #11151c;
   border-bottom: 1px solid #1f2630;
   flex: none;
+  /* 防御:header 是固定按钮 + 可伸缩文本的混排,min-width:0 让它绝不被内部
+     min-content 撑超视口宽(否则窄屏多一个 ＋新建 就溢出 → 横向滚动条)。 */
+  min-width: 0;
 }
 .back {
   background: #1f2937;
@@ -171,6 +174,11 @@ onUnmounted(() => {
 .logo {
   font-weight: 700;
   color: #e5e7eb;
+  /* 主机名过长时截断而非撑破 header(min-width:0 才能在 flex 里真正收缩)。 */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .newbtn {
   background: #16653a;
@@ -209,6 +217,8 @@ onUnmounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 55%;
+  /* 空间不足时可一路收缩到 0(配合 ellipsis),把宽度让给固定按钮。 */
+  min-width: 0;
 }
 .body {
   flex: 1;
@@ -232,5 +242,16 @@ onUnmounted(() => {
 .chatmain {
   flex: 1;
   min-width: 0;
+}
+/* 窄屏(手机)header 瘦身:路径次要先隐藏,＋新建 收成纯「＋」图标,
+   给固定按钮(返回/连接态/会话面板)与完整主机名腾足空间,根除横向滚动条。
+   宽屏不受影响,照常显示完整「＋ 新建」与路径。 */
+@media (max-width: 480px) {
+  .path {
+    display: none;
+  }
+  .nb-t {
+    display: none;
+  }
 }
 </style>
