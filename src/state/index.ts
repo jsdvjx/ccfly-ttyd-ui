@@ -16,17 +16,11 @@
 //   7) offline →  'offline'
 //   8) 其余     →  'unknown'
 import type { JEvent, SessionState, Status } from './types.ts'
-import { detectIdle } from './detectors/idle.ts'
-import { detectBusy } from './detectors/busy.ts'
-import { detectSelect, parseSelect } from './detectors/select.ts'
-import { detectUsage } from './detectors/usage.ts'
-import { detectHelp } from './detectors/help.ts'
-import { detectStatus } from './detectors/status.ts'
-import { detectConfig } from './detectors/config.ts'
-import { detectStats } from './detectors/stats.ts'
-import { detectMcp } from './detectors/mcp.ts'
-import { detectPlugin } from './detectors/plugin.ts'
-import { detectOffline } from './detectors/offline.ts'
+// 顶层屏判已迁至 registry(pickScreenStatus);本体仅直接用到 parseSelect / detectCompact /
+// 各 jsonl 元数据检测器。其余检测器仍经下方 `export { ... } from` 区块对外原样导出(供
+// server/state-check.ts、ChatComposer.vue、src/send/commands.ts 调用),那是独立的再导出语句,
+// 不消费这里的顶层 import,故不在此重复 import(否则 noUnusedLocals 报未用)。
+import { parseSelect } from './detectors/select.ts'
 import { detectCompact } from './detectors/compact.ts'
 import {
   detectTurn,
@@ -39,6 +33,7 @@ import {
   detectLastActivity,
   detectTurnMeta,
 } from './detectors/jsonl.ts'
+import { pickScreenStatus } from './registry.ts'
 import { detectTasks } from './detectors/tasks.ts'
 
 export * from './types.ts'
@@ -76,33 +71,12 @@ export function sessionStatus(events: JEvent[], screen: string[], suggest = ''):
   let source: 'screen' | 'jsonl' = 'screen'
   let status: Status
 
-  if (detectSelect(screen)) {
-    status = 'select'
-  } else if (detectUsage(screen)) {
-    status = 'usage'
-  } else if (detectHelp(screen)) {
-    status = 'help'
-  } else if (detectStatus(screen)) {
-    status = 'status'
-  } else if (detectConfig(screen)) {
-    status = 'config'
-  } else if (detectStats(screen)) {
-    status = 'stats'
-  } else if (detectMcp(screen)) {
-    status = 'mcp'
-  } else if (detectPlugin(screen)) {
-    status = 'plugin'
-  } else if (detectBusy(screen)) {
-    // 屏幕权威判「忙」;jsonl 细分:工具在飞(awaiting-tool)vs 生成文本(generating)。
-    status = detectTurn(events) === 'awaiting-tool' ? 'awaiting-tool' : 'generating'
-  } else if (detectIdle(screen)) {
-    status = 'idle'
-  } else if (detectOffline(screen)) {
-    // 所有已知 claude 屏都不中,且末尾窗口有 shell 证据 → 落回 shell。
-    status = 'offline'
+  const screenStatus = pickScreenStatus(screen, events)
+  if (screenStatus !== null) {
+    // 屏判命中(含 busy 的 jsonl 细分 awaiting-tool/generating,见 registry 的 refine)。
+    status = screenStatus
   } else if (events.length) {
-    // 屏判认不出(终端没连、读不到、或隐藏终端尺寸下 TUI 渲染不标准)但有 jsonl 历史
-    // → 用 jsonl 尾部推断(idle/generating/awaiting-tool),而非一律 unknown。chat 视图本就以 jsonl 为准。
+    // 屏判全落空但有 jsonl 历史 → 退回 jsonl 尾部推断(idle/generating/awaiting-tool),source 标记为 jsonl。
     status = detectTurn(events)
     source = 'jsonl'
   } else {
