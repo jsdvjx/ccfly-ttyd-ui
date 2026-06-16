@@ -2,10 +2,24 @@
 // NewSessionDialog — 新建会话:文件系统目录浏览器(fetch /dirs 导航)+ POST /new 在选定目录起
 // 全新 claude,拿到真 sid 后 emit('created', sid),由 Workspace 切到新会话。
 // 与 CLI `ccfly a` / `ccfly new` 的浏览器同口径:只列子目录、跳过隐藏;底部可选权限模式 / skip。
-import { ref, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { dirsUrl, newSessionUrl } from '../config'
 
-const emit = defineEmits<{ created: [sid: string]; close: [] }>()
+// devices 传入(hub 落地页用)→ 顶部出设备选择器,URL 走该设备网关前缀 /x/<id>;
+// 不传(节点 / 单设备工作区)→ 用全局 base(httpUrl,DeviceView 已指向 /x/<当前设备>)。
+type DeviceOpt = { id: string; name: string }
+const props = defineProps<{ devices?: DeviceOpt[] }>()
+const emit = defineEmits<{ created: [sid: string, deviceId: string]; close: [] }>()
+
+const hub = computed(() => !!props.devices?.length)
+const selDev = ref(props.devices?.[0]?.id ?? '')
+const base = computed(() => (hub.value ? '/x/' + selDev.value : ''))
+function dUrl(p: string): string {
+  return hub.value ? base.value + '/dirs' + (p ? '?path=' + encodeURIComponent(p) : '') : dirsUrl(p)
+}
+function nUrl(): string {
+  return hub.value ? base.value + '/new' : newSessionUrl()
+}
 
 const path = ref('')
 const parent = ref('')
@@ -26,7 +40,7 @@ async function browse(p: string): Promise<void> {
   loading.value = true
   err.value = ''
   try {
-    const r = await fetch(dirsUrl(p), { credentials: 'include' })
+    const r = await fetch(dUrl(p), { credentials: 'include' })
     if (!r.ok) throw new Error('HTTP ' + r.status)
     const d = await r.json()
     path.value = d.path || p
@@ -44,7 +58,7 @@ async function create(): Promise<void> {
   creating.value = true
   err.value = ''
   try {
-    const r = await fetch(newSessionUrl(), {
+    const r = await fetch(nUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -58,7 +72,7 @@ async function create(): Promise<void> {
     const d = await r.json()
     const sid = d.session_id || d.session
     if (!sid) throw new Error('会话已创建,但还没拿到 id,稍后在列表里打开')
-    emit('created', sid)
+    emit('created', sid, selDev.value)
   } catch (e) {
     err.value = '新建失败:' + String((e as Error).message || e)
   } finally {
@@ -71,6 +85,7 @@ function cyclePerm(): void {
   permMode.value = permModes[(permModes.indexOf(permMode.value) + 1) % permModes.length]
 }
 
+watch(selDev, () => browse('')) // 切设备 → 从该设备家目录重新浏览
 onMounted(() => browse('')) // 空 = 设备家目录
 </script>
 
@@ -80,6 +95,13 @@ onMounted(() => browse('')) // 空 = 设备家目录
       <div class="hd">
         <b>新建会话 — 选择目录</b>
         <button class="x" title="关闭" @click="emit('close')">✕</button>
+      </div>
+
+      <div v-if="hub" class="devbar">
+        <span class="dl">设备</span>
+        <select v-model="selDev" class="devsel">
+          <option v-for="d in props.devices" :key="d.id" :value="d.id">{{ d.name }}</option>
+        </select>
       </div>
 
       <div class="pathbar"><span>📁</span><span class="pt">{{ path || '…' }}</span></div>
@@ -153,6 +175,27 @@ onMounted(() => browse('')) // 空 = 设备家目录
   color: #6b7280;
   cursor: pointer;
   font-size: 14px;
+}
+.devbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #1f2630;
+}
+.dl {
+  font-size: 11px;
+  color: #6b7280;
+  flex: none;
+}
+.devsel {
+  flex: 1;
+  background: #0d1117;
+  color: #e5e7eb;
+  border: 1px solid #2a3441;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12.5px;
 }
 .pathbar {
   display: flex;

@@ -2,7 +2,7 @@
 // AllSessions — 跨设备、按 cwd 合并的会话卡片页(首页 /;/sessions 为旧链兼容)。
 // 对每台「在线」设备并行 GET /x/<id>/sessions(同 DeviceView 用的实时网关),给每条会话打来源设备
 // 标签,再按「cwd 原文完全相等」分组成卡片。离线设备的缓存接口形状不同,本页只取在线设备的实时会话。
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import {
   api,
   basename,
@@ -16,6 +16,7 @@ import {
 } from './api'
 import { tmuxName } from '../config'
 import NavTabs from './NavTabs.vue'
+import NewSessionDialog from '../components/NewSessionDialog.vue'
 
 interface TaggedSession extends SessionRow {
   deviceId: string
@@ -35,6 +36,14 @@ const emit = defineEmits<{ reload: []; navigate: [path: string] }>()
 const groups = ref<CwdGroup[] | null>(null)
 const onlineCount = ref(0)
 const expanded = ref<Set<string>>(new Set())
+
+// 顶层新建会话:选在线设备 → 目录浏览器 → 在该设备建 → 跳到新会话(无需先有会话)。
+const showNew = ref(false)
+const onlineDevs = computed(() => (props.devs ?? []).filter((d) => d.online).map((d) => ({ id: d.id, name: d.name })))
+function onNewCreated(sid: string, deviceId: string): void {
+  showNew.value = false
+  if (deviceId && sid) emit('navigate', '/d/' + deviceId + '/' + sid)
+}
 
 function toggleExpand(key: string): void {
   const next = new Set(expanded.value)
@@ -100,9 +109,24 @@ watch(() => props.devs, load, { immediate: true })
       <span class="brand">✈️ ccfly</span>
       <NavTabs active="allSessions" @navigate="emit('navigate', $event)" />
       <span class="who">{{ owner }}</span>
+      <button
+        v-if="onlineDevs.length"
+        class="newbtn"
+        title="新建会话(选设备 + 目录)"
+        @click="showNew = true"
+      >
+        ＋ 新建
+      </button>
       <button class="ghost" title="刷新" @click="refresh">↻</button>
       <button class="ghost" @click="logout">退出</button>
     </header>
+
+    <NewSessionDialog
+      v-if="showNew"
+      :devices="onlineDevs"
+      @created="onNewCreated"
+      @close="showNew = false"
+    />
     <main>
       <p v-if="props.devs === null || groups === null" class="muted">加载会话…</p>
       <p v-else-if="onlineCount === 0" class="muted">没有在线设备。</p>

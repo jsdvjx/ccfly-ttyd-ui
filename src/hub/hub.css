@@ -161,6 +161,17 @@
 .hub .ghost {
   background: transparent;
 }
+.hub .newbtn {
+  background: #16653a;
+  color: #d1fae5;
+  border: 1px solid #1f7a47;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  flex: none;
+}
 .hub .muted {
   color: var(--muted);
   font-size: 13px;
