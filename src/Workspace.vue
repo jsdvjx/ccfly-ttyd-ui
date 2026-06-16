@@ -7,9 +7,12 @@ import { useTranscript } from './transcript/useTranscript'
 import { RESULT_KEY } from './transcript/useToolStatus'
 import ChatView from './ChatView.vue'
 import SessionsPanel from './components/SessionsPanel.vue'
+import NewSessionDialog from './components/NewSessionDialog.vue'
 
 const props = defineProps<{ initialSid?: string; back?: boolean; deviceLabel?: string }>()
 const emit = defineEmits<{ back: []; navigate: [sid: string] }>()
+
+const showNew = ref(false)
 
 const mode = ref<ViewMode>('chat') // 固定对话视图
 const termEl = ref<HTMLElement | null>(null)
@@ -46,6 +49,12 @@ if (props.initialSid) selSid.value = props.initialSid // hub 深链:预选会话
 watch(selSid, (sid) => {
   if (sid) emit('navigate', sid) // 选中变化 → 同步 URL(hub)
 })
+
+// 新建会话拿到真 sid → 切到它(selSid 变化自动重连 + 同步 URL),与点选已有会话同一路径。
+function onCreated(sid: string): void {
+  showNew.value = false
+  selSid.value = sid
+}
 
 // 移动端软键盘/地址栏:把 .app 高度钉到 visualViewport 的可见高度,键盘弹起时整页收缩到键盘上方,
 // 浮动输入框(absolute 贴 .app 底)自然贴在键盘之上。iOS 弹键盘还会把页面整体向上「平移」
@@ -90,6 +99,8 @@ onUnmounted(() => {
         >{}</span
       >
       <span class="path" :title="resolvedPath">{{ resolvedPath }}</span>
+      <!-- 新建会话:打开目录浏览器 → 在选定目录起全新 claude → 切到它 -->
+      <button class="newbtn" title="新建会话(选目录)" @click="showNew = true">＋ 新建</button>
       <!-- 本目录会话面板:列出当前 cwd 下全部会话,点选快速跳转(selSid 变化会自动重连+同步 URL) -->
       <SessionsPanel
         :sessions="sessions"
@@ -98,6 +109,8 @@ onUnmounted(() => {
         @select="(id) => (selSid = id)"
       />
     </header>
+
+    <NewSessionDialog v-if="showNew" @created="onCreated" @close="showNew = false" />
 
     <main class="body">
       <!-- 隐藏终端:始终挂载、移屏外(仅发送/读状态;不能 display:none,否则 fit 退化、检测器失灵)。 -->
@@ -158,6 +171,17 @@ onUnmounted(() => {
 .logo {
   font-weight: 700;
   color: #e5e7eb;
+}
+.newbtn {
+  background: #16653a;
+  color: #d1fae5;
+  border: 1px solid #1f7a47;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  flex: none;
 }
 .conn {
   font-family: var(--vsc-mono, ui-monospace, monospace);

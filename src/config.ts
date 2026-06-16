@@ -51,6 +51,13 @@ export const takeoverUrl = (session: string): string =>
 // tmuxName —— claude session id → tmux 会话名(ccfly 约定 cc-<sid[:8]>;服务端再解析 /clear)。
 export const tmuxName = (sid: string): string => 'cc-' + sid.slice(0, 8)
 
+// dirsUrl —— 列某路径下的子目录(新建会话的目录浏览器用);path 空 = 设备家目录。
+export const dirsUrl = (path: string): string =>
+  httpUrl('/dirs' + (path ? '?path=' + encodeURIComponent(path) : ''))
+// newSessionUrl —— POST {cwd, permission_mode?, skip_permissions?} 新建会话(detached 起全新 claude),
+// 回 {session_id, session}(session_id 是轮询 panemap 拿到的真 sid)。
+export const newSessionUrl = (): string => httpUrl('/new')
+
 // uploadUrl —— 图片/文件上传(multipart 字段 file)。?session= 用 tmux 名:服务端据此解析会话
 // 冻结 cwd,落盘 <cwd>/.ccfly-uploads/ 并返回绝对路径(供 /sendkeys 的 images 原生附图)。
 export const uploadUrl = (session: string): string =>
