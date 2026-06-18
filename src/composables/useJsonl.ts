@@ -12,6 +12,11 @@ import { loadCache, saveCache, type JsonlCache } from '../idb'
 const KEEP = 10000 // 写缓存时保留的尾部条数上限(内存不再裁剪:首拉即按 ?tail 限窗)
 const TAIL = 200 // 「最新优先」首拉的尾窗行数(冷开;暖开走 since 续传不带 tail)
 
+// memCache — 模块级内存快照(键 = src),跨 Workspace 重挂存活。冷开时**同步**命中即秒铺对话,
+// 零异步、零空屏 —— 这是「从列表进会话 / 再次进入刚看过的会话」不再每次先闪一帧空白的关键
+// (IndexedDB 是异步的,单靠它每次进入都会先空一帧)。persist() 同步写它 + 异步写 IDB(IDB 管跨刷新)。
+const memCache = new Map<string, JsonlCache>()
+
 // srcPrefix — src('session:<名>' 或 绝对路径)→ 查询前缀(/sse/jsonl 与 /jsonl/before 共用,避免漂移)。
 function srcPrefix(src: string): string {
   const s = src.trim()
@@ -59,12 +64,14 @@ export function useJsonl(src: Ref<string>) {
       // headStart 仅在「缓存了内存全集」(≤KEEP)时才有效:此时缓存最旧 = 内存最旧;
       // 否则缓存只存了尾部子集,其最旧行行首未知 → 存 0(暖开时该会话暂不可向上翻,冷开重窗后恢复)。
       const hs = events.value.length <= KEEP ? headStart : 0
-      void saveCache(cacheKey, {
+      const snap: JsonlCache = {
         path: curPath,
         offset,
         events: events.value.slice(-KEEP),
         headStart: hs,
-      })
+      }
+      memCache.set(cacheKey, snap) // 同步内存镜像:再次进入秒开、零空屏(见 open 的内存命中分支)
+      void saveCache(cacheKey, snap) // IndexedDB:跨刷新 / 重开
     }
   }
   function scheduleSave() {
@@ -76,38 +83,10 @@ export function useJsonl(src: Ref<string>) {
     }, 1500)
   }
 
-  // follow=true:本次是「跟随中的重开」(断流兜底/外部 reconnect),非用户主动切会话 —— 见 buildQuery。
-  async function open(follow = false) {
-    es?.close()
-    es = null
-    connected.value = false
-    if (saveTimer) {
-      clearTimeout(saveTimer)
-      saveTimer = 0
-    }
-    const myGen = ++gen
-    const s = src.value.trim()
-    cacheKey = s
-    curPath = ''
-    offset = 0
-    headStart = 0
-    hasMoreOlder.value = false
-    loadingOlder.value = false
-    firstMeta = true
-    events.value = []
-    resolvedPath.value = ''
-    triggerRef(events)
-    if (!s) return // 未选会话:不连
-
-    // 1) 读本地缓存(异步);期间若又切了会话则丢弃本次结果。
-    const cached: JsonlCache | null = await loadCache(s)
-    if (myGen !== gen) return
-
-    // 2) 连 SSE。命中缓存就带 since/sincePath 请求增量;首个 meta 再决定是否用缓存做基底。
-    const since = cached?.offset ?? 0
-    const sincePath = cached?.path ?? ''
-    es = new EventSource(sseUrl(buildQuery(s, since, sincePath, follow)))
-
+  // wire — 给当前 es 挂 meta/onopen/onerror/onmessage。base = 续传基底(冷开 = IndexedDB 缓存;
+  // 暖重连 = 当前内存快照)。服务端确认同文件(meta.fresh===false)就用 base 秒级铺底,否则清空从头收。
+  function wire(base: JsonlCache | null) {
+    if (!es) return
     es.addEventListener('meta', (e) => {
       try {
         const m = JSON.parse((e as MessageEvent).data) as {
@@ -123,16 +102,17 @@ export function useJsonl(src: Ref<string>) {
         }
         if (firstMeta) {
           firstMeta = false
-          // 服务端明确确认续传(同文件)→ 用缓存做基底,随后只追加增量。
-          if (m.fresh === false && cached && cached.events.length) {
-            events.value = cached.events as JEvent[]
-            offset = cached.offset
-            // 续传时服务端不给尾窗 headStart → 用缓存里持久化的 headStart(缺省=未知=不可向上翻)。
-            headStart = cached.headStart ?? 0
+          // 服务端明确确认续传(同文件)→ 用 base 做基底,随后只追加增量。
+          // 暖重连时 base.events === 当前 events(同引用),这步是 no-op,屏幕不闪、滚动不跳。
+          if (m.fresh === false && base && base.events.length) {
+            events.value = base.events as JEvent[]
+            offset = base.offset
+            // 续传时服务端不给尾窗 headStart → 用 base 持久化的 headStart(缺省=未知=不可向上翻)。
+            headStart = base.headStart ?? 0
             hasMoreOlder.value = headStart > 0
             triggerRef(events)
           } else {
-            // fresh / 老服务端无该字段 / 无缓存 → 从头(或尾窗)收,清空(防与全量重发重复)。
+            // fresh / 老服务端无该字段 / 无基底 → 从头(或尾窗)收,清空(防与全量重发重复)。
             events.value = []
             offset = 0
             headStart = m.headStart ?? 0
@@ -180,6 +160,75 @@ export function useJsonl(src: Ref<string>) {
         /* 非 JSON:跳过 */
       }
     }
+  }
+
+  // follow=true:本次是「跟随中的重开」(断流兜底/外部 reconnect),非用户主动切会话 —— 见 buildQuery。
+  async function open(follow = false) {
+    es?.close()
+    es = null
+    connected.value = false
+    if (saveTimer) {
+      clearTimeout(saveTimer)
+      saveTimer = 0
+    }
+    const myGen = ++gen
+    const s = src.value.trim()
+
+    // 暖重连:同一会话 + 跟随式重开(回前台 / 网络恢复)+ 内存已有事件 → **不清屏**。保留当前对话与游标,
+    // 从当前 offset 续 SSE 只拉增量;仅当服务端确认换了文件(meta.switched / fresh≠false)才清空重收。
+    // 修掉「每次回前台对话闪空→秒回」的大跳:reconnectAll → jsonlReconnect 旧实现无条件清空 events。
+    if (follow && s && s === cacheKey && curPath && events.value.length > 0) {
+      firstMeta = true
+      const base: JsonlCache = { path: curPath, offset, events: events.value, headStart }
+      es = new EventSource(sseUrl(buildQuery(s, offset, curPath, true)))
+      wire(base)
+      return
+    }
+
+    // 冷开(首连 / 用户切会话 / 从列表进会话):先**同步**查内存快照 → 命中即秒铺(零空屏);
+    // 未命中再读 IndexedDB(跨刷新兜底);都没有才空屏等 SSE。命中的那份即作 SSE 续传基底。
+    cacheKey = s
+    loadingOlder.value = false
+    firstMeta = true
+    const mem = s ? memCache.get(s) : undefined
+    let base: JsonlCache | null = null
+    if (mem && mem.events.length) {
+      // 同步铺底:复制事件数组,隔离 memCache 快照(SSE 续传往 events 里 push 不污染下次命中)。
+      events.value = mem.events.slice() as JEvent[]
+      offset = mem.offset
+      curPath = mem.path
+      headStart = mem.headStart ?? 0
+      resolvedPath.value = mem.path
+      base = { path: curPath, offset, events: events.value, headStart }
+    } else {
+      events.value = []
+      offset = 0
+      curPath = ''
+      headStart = 0
+      resolvedPath.value = ''
+    }
+    hasMoreOlder.value = headStart > 0
+    triggerRef(events)
+    if (!s) return // 未选会话:不连
+
+    // 内存未命中 → 读 IndexedDB(异步;期间又切了会话则作废)。命中即铺底,作续传基底。
+    if (!base) {
+      const cached: JsonlCache | null = await loadCache(s)
+      if (myGen !== gen) return
+      if (cached && cached.events.length) {
+        events.value = cached.events as JEvent[]
+        offset = cached.offset
+        curPath = cached.path
+        headStart = cached.headStart ?? 0
+        hasMoreOlder.value = headStart > 0
+        resolvedPath.value = cached.path
+        triggerRef(events)
+        base = cached
+      }
+    }
+    // 连 SSE:有基底就带 since/sincePath 只拉增量;首个 meta 决定沿用基底(同文件 = no-op)或清空重收。
+    es = new EventSource(sseUrl(buildQuery(s, offset, curPath, follow)))
+    wire(base)
   }
 
   // loadOlder — 向上翻页:取 headStart 字节之前的一窗更老原始行,prepend 到 events 头部。
